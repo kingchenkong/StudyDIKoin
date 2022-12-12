@@ -1,4 +1,4 @@
-package com.kck.studydikoin
+package com.kck.studydikoin.di
 
 import com.kck.studydikoin.domain.usecases.GetVehicleUseCaseImpl
 import com.kck.studydikoin.domain.usecases.IGetVehiclesUseCase
