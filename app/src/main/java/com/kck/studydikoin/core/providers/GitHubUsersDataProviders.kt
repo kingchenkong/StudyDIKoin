@@ -1,0 +1,52 @@
+package com.kck.studydikoin.core.providers
+
+import android.util.Log
+import com.google.gson.Gson
+import com.google.gson.JsonObject
+import com.kck.studydikoin.core.domain.GitHubUser
+import com.kck.studydikoin.core.network.service.GitHubUsersService
+import retrofit2.Response
+
+class GitHubUsersDataProviders(
+    private val gitHubUsersService: GitHubUsersService
+) : GitHubProviders {
+    private val TAG: String = GitHubUsersDataProviders::class.java.simpleName
+
+    override suspend fun getGitHubUsers(): Result<GitHubUser> {
+        val response: Response<JsonObject> = gitHubUsersService.getGitHubUsers()
+        logResponse(response)
+
+        return when {
+            response.isSuccessful -> {
+                val gson = Gson()
+                Log.e(TAG, "getGitHubUsers: aaa $response")
+                val json: JsonObject = response.body()!!
+                val jsonElement = gson.toJsonTree(json)
+                val string = gson.toJson(json)
+                Log.e(TAG, "getGitHubUsers: bbb $json")
+                Log.e(TAG, "getGitHubUsers: ccc $jsonElement")
+                Log.e(TAG, "getGitHubUsers: ddd $string")
+                val ghu:GitHubUser = gson.fromJson(jsonElement, GitHubUser::class.java)
+                Log.e(TAG, "getGitHubUsers: $ghu")
+                Result.success(ghu)
+            }
+            else -> {
+                Result.failure(Exception())
+            }
+        }
+    }
+
+    private fun logResponse(response: Response<JsonObject>) {
+//        Log.d(TAG, "logResponse: $response")
+        try {
+            Log.d(TAG, "getGitHubUsers: isSuccessful: \n${response.isSuccessful}")
+            Log.d(TAG, "getGitHubUsers: code: \n${response.code()}")
+            Log.d(TAG, "getGitHubUsers: message: \n${response.message()}")
+            Log.d(TAG, "getGitHubUsers: header: \n${response.headers()}")
+            Log.d(TAG, "getGitHubUsers: body: \n${response.body()}")
+            Log.d(TAG, "getGitHubUsers: errorBody: \n${response.errorBody()}")
+        } catch (exception: Exception) {
+            Log.d(TAG, "getGitHubUsers: exception: \n $exception")
+        }
+    }
+}
