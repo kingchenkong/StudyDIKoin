@@ -14,20 +14,12 @@ class GitHubUsersDataProviders(
 
     override suspend fun getGitHubUsers(): Result<GitHubUser> {
         val response: Response<JsonObject> = gitHubUsersService.getGitHubUsers()
-        logResponse(response)
+//        logResponse(response)
 
         return when {
             response.isSuccessful -> {
                 val gson = Gson()
-                Log.e(TAG, "getGitHubUsers: aaa $response")
-                val json: JsonObject = response.body()!!
-                val jsonElement = gson.toJsonTree(json)
-                val string = gson.toJson(json)
-                Log.e(TAG, "getGitHubUsers: bbb $json")
-                Log.e(TAG, "getGitHubUsers: ccc $jsonElement")
-                Log.e(TAG, "getGitHubUsers: ddd $string")
-                val ghu:GitHubUser = gson.fromJson(jsonElement, GitHubUser::class.java)
-                Log.e(TAG, "getGitHubUsers: $ghu")
+                val ghu:GitHubUser = gson.fromJson(response.body()!!, GitHubUser::class.java)
                 Result.success(ghu)
             }
             else -> {
@@ -37,7 +29,6 @@ class GitHubUsersDataProviders(
     }
 
     private fun logResponse(response: Response<JsonObject>) {
-//        Log.d(TAG, "logResponse: $response")
         try {
             Log.d(TAG, "getGitHubUsers: isSuccessful: \n${response.isSuccessful}")
             Log.d(TAG, "getGitHubUsers: code: \n${response.code()}")
